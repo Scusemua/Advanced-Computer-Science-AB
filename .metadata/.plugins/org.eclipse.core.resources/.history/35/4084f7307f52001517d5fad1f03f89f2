@@ -1,0 +1,22 @@
+package Project1;
+
+public class Runner {
+	
+	private static BattleShip game = new BattleShip();
+	
+	// Main method
+	public static void main(String[] args) {	
+		// Initialize the Game's UI
+		game.initUI();
+		
+		// Create the ship, add it to the ArrayList of ships, and print all of the coordinates in inhabits 
+		Ship s1 = new Ship();
+		game.getShips()add(s1);
+		s1.printSpaces();
+	}
+	
+	public static BattleShip getGame() {
+		return game;
+	}
+	
+}
