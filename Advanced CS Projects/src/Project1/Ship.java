@@ -64,8 +64,8 @@ public class Ship {
 	public int[][] generateLocation() {
 		// Randomly generate the x & y coordinates of the left-most or top-most part of the ship.
 		Random RNGesus = new Random(System.nanoTime()); // Create a random number generator seeded with the current time in nano-seconds 
-		initialXCord = RNGesus.nextInt(6) + 1; // Seven is the maximum coordinate that the ship can start at without going off the board
-		initialYCord = RNGesus.nextInt(6) + 1;// Seven is the maximum coordinate that the ship can start at without going off the board
+		initialXCord = RNGesus.nextInt(8) + 1; // Eight is the maximum coordinate that the ship can start at without going off the board
+		initialYCord = RNGesus.nextInt(8) + 1;// Eight is the maximum coordinate that the ship can start at without going off the board
 		locations[0][0] = initialXCord; // Store initial X coordinate
 		locations[0][1] = initialYCord; // Store initial y coordinate 
 		direction = RNGesus.nextInt(2); // 0 = horizontal, 1 = vertical

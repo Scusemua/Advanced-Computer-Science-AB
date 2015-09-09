@@ -33,7 +33,7 @@ public class BattleShip extends JFrame {
 	// Create the array of buttons and arraylist of ships
 	// I am using an ArrayList for the ships as I am going to implement the option
 	// to have more than one ship
-	private BenButton[][] buttons = new BenButton[10][10];
+	private BenButton[][] buttons = new BenButton[13][13];
 	private ArrayList<Ship> ships = new ArrayList<Ship>();
 	
 	// Number of shots fired (effectively number of buttons clicked)
@@ -53,8 +53,11 @@ public class BattleShip extends JFrame {
 	
 	private ButtonListener buttonListener = null;
 	
+	// Singleton
 	private static BattleShip instance = null;
 	
+	// Creates the Singleton if it hasn't already been created,
+	// then returns it 
 	public static BattleShip getInstance() {
 		if(instance == null) {
 			instance = new BattleShip();
@@ -82,7 +85,7 @@ public class BattleShip extends JFrame {
 		} 
 		
 		// Set the layout to GridLayout
-		setLayout(new GridLayout(10, 10));
+		setLayout(new GridLayout(13, 13));
 		
 		// Set the title of the window
 		setTitle("Memeship - The Dankening");
@@ -122,7 +125,7 @@ public class BattleShip extends JFrame {
 		add(firstButton);
 		
 		// Add JLabels across the very top to number each colomn 
-		for(int i = 0; i < 9; i++) {
+		for(int i = 0; i < 12; i++) {
 			JLabel label = new JLabel ("        " + (i + 1));
 		
 			//label.setIcon(doritos);
@@ -139,14 +142,14 @@ public class BattleShip extends JFrame {
 		// y-coordinate variable after creating a label like normal.
 		boolean first = true;
 		
-		for(int i = 10; i < 100; i++) {
+		for(int i = 13; i < 169; i++) {
 			
 			// Every 10th spot is where a JLabel should go
 			// Check to see if we're at a 10th spot
 			// If so, put a label there instead of a button
-			if (i % 10 == 0) {
+			if (i % 13 == 0) {
 				// Create the J Label. The spaces are so the number is centered more.
-				JLabel label = new JLabel("             " + (i/10));
+				JLabel label = new JLabel("             " + (i/13));
 				
 				// Add the label to the JFrame
 				add(label);
@@ -182,12 +185,12 @@ public class BattleShip extends JFrame {
 				// The maximum x-coordinate is nine. After that, a new row will begin and the x-coordinate will have to start at one.
 				// Instead of incrementing the y-coordinate here (as a new row is beginning at this point), it is incremented during the portion of the
 				// for-loop that handles the JLabels.
-				if(xCord > 9) xCord = 1;
+				if(xCord > 12) xCord = 1;
 			}
 		}
 		
 		// Set the size of the window and whether or not the user can resize it
-		setSize(500,500);
+		setSize(700,700);
 		setResizable(false);
 		
 		// Size everything to fit preferred size and layouts
@@ -197,14 +200,15 @@ public class BattleShip extends JFrame {
 	}
 	
 	private void firstButtonActionPerformed(java.awt.event.ActionEvent evt) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+
 		// Play the John Cena theme song
 		johnCenaClip.setFramePosition(0);
-		johnCenaClip.start();
+		//johnCenaClip.start();
 		
 		// When the John Cena button is pressed, it randomly changes all the icons of the buttons
 		// to various memes. The meme is selected randomly.
-		for(int i = 0; i < 10; i++) {
-			for(int j = 0; j < 10; j++) {
+		for(int i = 0; i < 13; i++) {
+			for(int j = 0; j < 13; j++) {
 				if(buttons[i][j] != null) {
 					Random rand = new Random(System.nanoTime());
 					int k = rand.nextInt(5) + 1;

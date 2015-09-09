@@ -35,13 +35,13 @@ public class ButtonListener implements ActionListener {
 	// If I do all of this in the constructor instead of each time it's supposed to play the sound,
 	// it will only play one time. After that, it won't play anymore. c
 	public ButtonListener() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		audioInRPGfired = AudioSystem.getAudioInputStream(getClass().getResource("/RPGfired.wav"));
-		soundHit = AudioSystem.getClip();
-		soundHit.open(audioInRPGfired);
-		
 		audioInRPGhit = AudioSystem.getAudioInputStream(getClass().getResource("/RPGhit.wav"));
+		soundHit = AudioSystem.getClip();
+		soundHit.open(audioInRPGhit);
+		
+		audioInRPGfired = AudioSystem.getAudioInputStream(getClass().getResource("/RPGfired.wav"));
 		soundMiss = AudioSystem.getClip();
-		soundMiss.open(audioInRPGhit);
+		soundMiss.open(audioInRPGfired);
 		
 		audioInUnderFifteen = AudioSystem.getAudioInputStream(getClass().getResource("/under15.wav"));
 		underFifteen = AudioSystem.getClip();
