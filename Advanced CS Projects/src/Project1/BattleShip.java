@@ -70,8 +70,15 @@ public class BattleShip extends JFrame {
 		
 		try {
 			buttonListener = new ButtonListener();
-		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+			// In Java 1.8, you can put all of the catches in a single statement
+			// However, in order to keep in compatible for older versions, I'm keeping them
+			// all seperate
+		} catch (UnsupportedAudioFileException e1) {
 			e1.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} catch (LineUnavailableException e3) {
+			e3.printStackTrace();
 		}
 		
 		// Load the audio for the John Cena sound
@@ -79,10 +86,13 @@ public class BattleShip extends JFrame {
 			audioInJohnCena = AudioSystem.getAudioInputStream(getClass().getResource("/johncena.wav"));
 			johnCenaClip = AudioSystem.getClip();
 			johnCenaClip.open(audioInJohnCena);
-		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
-			// TODO Auto-generated catch block
+		} catch (UnsupportedAudioFileException e1) {
 			e1.printStackTrace();
-		} 
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} catch (LineUnavailableException e3) {
+			e3.printStackTrace();
+		}
 		
 		// Set the layout to GridLayout
 		setLayout(new GridLayout(13, 13));
@@ -113,10 +123,12 @@ public class BattleShip extends JFrame {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				try {
 					firstButtonActionPerformed(evt);
-				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-					// There really shouldn't be an exception thrown ever at this point.
-					// If there is, it's because the audio file is either in an incorrect format or named incorrectly.
-					e.printStackTrace();
+				} catch (UnsupportedAudioFileException e1) {
+					e1.printStackTrace();
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				} catch (LineUnavailableException e3) {
+					e3.printStackTrace();
 				}
 			}
 		});
@@ -124,9 +136,11 @@ public class BattleShip extends JFrame {
 		// This button isn't added to the array of buttons
 		add(firstButton);
 		
-		// Add JLabels across the very top to number each colomn 
-		for(int i = 0; i < 12; i++) {
-			JLabel label = new JLabel ("        " + (i + 1));
+		// Add JLabels across the very top to number each column by 
+		// creating chars with their ASCII values 
+		for(int i = 65; i < 77; i++) {
+			char c = (char) i;
+			JLabel label = new JLabel ("        " + c);
 		
 			//label.setIcon(doritos);
 			
@@ -144,7 +158,7 @@ public class BattleShip extends JFrame {
 		
 		for(int i = 13; i < 169; i++) {
 			
-			// Every 10th spot is where a JLabel should go
+			// Every 13th spot is where a JLabel should go
 			// Check to see if we're at a 10th spot
 			// If so, put a label there instead of a button
 			if (i % 13 == 0) {
@@ -182,7 +196,7 @@ public class BattleShip extends JFrame {
 				// Increment the x-coordinate so the next button will be placed in the next available spot
 				xCord++;
 				
-				// The maximum x-coordinate is nine. After that, a new row will begin and the x-coordinate will have to start at one.
+				// The maximum x-coordinate is twelve. After that, a new row will begin and the x-coordinate will have to start at one.
 				// Instead of incrementing the y-coordinate here (as a new row is beginning at this point), it is incremented during the portion of the
 				// for-loop that handles the JLabels.
 				if(xCord > 12) xCord = 1;
@@ -203,7 +217,7 @@ public class BattleShip extends JFrame {
 
 		// Play the John Cena theme song
 		johnCenaClip.setFramePosition(0);
-		//johnCenaClip.start();
+		johnCenaClip.start();
 		
 		// When the John Cena button is pressed, it randomly changes all the icons of the buttons
 		// to various memes. The meme is selected randomly.
@@ -252,18 +266,24 @@ public class BattleShip extends JFrame {
 		s1.printSpaces();
 	}
 	
+	// Returns the ArrayList of ships 
 	public ArrayList<Ship> getShips() {
 		return ships;
 	}
 	
+	// Returns two-dimensional array of buttons
 	public BenButton[][] getButtons() {
 		return buttons;
 	}
 	
+	// Returns the number of shots fired
 	public int getShotsFired() {
 		return shotsFired;
 	}
 	
+	// The shotsFired variable will only ever need to be incremented by
+	// one at the most, so instead of a setShotsFired() method, I just created
+	// an incrementShotsFired() method that increments shotsFired by one
 	public void incrementShotsFired() {
 		shotsFired++;
 	}

@@ -3,8 +3,8 @@ package Project1;
 import java.util.Random;
 
 public class Ship {
-	private int initialXCord;
-	private int initialYCord;
+	private int initialXCord; // Left-most or top-most part of ship
+	private int initialYCord; // Left-most or top-most part of ship
 	private int direction; // 0 = horizontal, 1 = vertical
 	
 	// Number of times the ship has been hit

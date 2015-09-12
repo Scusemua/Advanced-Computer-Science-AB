@@ -32,8 +32,6 @@ public class ButtonListener implements ActionListener {
 	AudioInputStream audioInUnderFifteen = null;
 	
 	// Constructor - mainly used to load sounds
-	// If I do all of this in the constructor instead of each time it's supposed to play the sound,
-	// it will only play one time. After that, it won't play anymore. c
 	public ButtonListener() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		audioInRPGhit = AudioSystem.getAudioInputStream(getClass().getResource("/RPGhit.wav"));
 		soundHit = AudioSystem.getClip();
@@ -67,10 +65,9 @@ public class ButtonListener implements ActionListener {
 				try {
 					playSoundHit();
 				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				// Print information about where the ship was it
+				// Print information about where the ship was hit
 				System.out.println("Ship hit at " + b.getXCord() + ", " + b.getYCord());
 				
 				// Set the disabled icon of the button to the explosion icon
@@ -82,17 +79,23 @@ public class ButtonListener implements ActionListener {
 				if(BattleShip.getInstance().getShips().get(i).getSunk()) {
 					try {
 						win();
-					} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
-						// TODO Auto-generated catch block
+					} catch (UnsupportedAudioFileException e1) {
 						e1.printStackTrace();
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					} catch (LineUnavailableException e3) {
+						e3.printStackTrace();
 					}
 				}
 			} else { // If the player did NOT hit a ship, play the miss sound!
 				try {
 					playSoundMiss();
-				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
-					// TODO Auto-generated catch block
+				} catch (UnsupportedAudioFileException e1) {
 					e1.printStackTrace();
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				} catch (LineUnavailableException e3) {
+					e3.printStackTrace();
 				}
 			}
 		}
@@ -100,24 +103,21 @@ public class ButtonListener implements ActionListener {
 	
 	// Plays "gunshot" and then splash, indicating a miss
 	public void playSoundMiss() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		//AudioInputStream audioIn = AudioSystem.getAudioInputStream(getClass().getResource("/RPGfired.wav"));
-		//Clip clip = AudioSystem.getClip();
+		// Reset the clip's frame position to 0 so it starts from the beginning
 		soundMiss.setFramePosition(0);
 		soundMiss.start();
 	}
 	
 	// Plays "gunshot" and then explosion, indicating a hit
 	public void playSoundHit() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		//AudioInputStream audioIn = AudioSystem.getAudioInputStream(getClass().getResource("/RPGhit.wav"));
-		//Clip clip = AudioSystem.getClip();
+		// Reset the clip's frame position to 0 so it starts from the beginning
 		soundHit.setFramePosition(0);
 		soundHit.start();
 	}
 	
 	// Sound played when the player wins if it only took him 15 shots or less
 	public void playUnderFifteen() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-		//AudioInputStream audioIn = AudioSystem.getAudioInputStream(getClass().getResource("/under15.wav"));
-		//Clip clip = AudioSystem.getClip();
+		// Reset the clip's frame position to 0 so it starts from the beginning
 		underFifteen.setFramePosition(0);
 		underFifteen.start();
 	}
