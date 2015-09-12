@@ -159,7 +159,7 @@ public class BattleShip extends JFrame {
 		for(int i = 13; i < 169; i++) {
 			
 			// Every 13th spot is where a JLabel should go
-			// Check to see if we're at a 10th spot
+			// Check to see if we're at a 13th spot
 			// If so, put a label there instead of a button
 			if (i % 13 == 0) {
 				// Create the J Label. The spaces are so the number is centered more.
@@ -250,12 +250,6 @@ public class BattleShip extends JFrame {
 		System.out.println("Event: Clearing ArrayList of ships for game restart...");
 		
 		ships.removeAll(ships);
-
-		// For debugging whether or not the ship ArrayList was cleared properly
-		/* for(int i = 0; i < ships.size(); i++) {
-			if(ships.get(i) != null) ships.get(i).printSpaces();
-		}
-		System.out.println("Done itterating through ships ArrayList..."); */
 		
 		// Reset the number of shots fired to 0, since the game restarted
 		shotsFired = 0;
