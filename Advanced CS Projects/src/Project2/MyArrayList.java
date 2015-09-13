@@ -1,42 +1,65 @@
 package Project2;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 public class MyArrayList<E> implements List<E> {
-	private int size; // Number of elements in the elements array
+	private int size; // Number of elements actually in the elements array
 	private Object[] elements; // Array of elements
 	
+	// Constructor that sets the initial capacity to whatever
+	// the user wants it to be
+	public MyArrayList(int initialCapacity) {
+		if(initialCapacity < 0) {
+			throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+		}
+		
+		elements = new Object[initialCapacity];
+	}
+	
+	// Default constructor has initial size of 10
 	public MyArrayList() {
 		elements = new Object[10]; // Initial size of 10;
 		size = 0;
 	}
 	
-	public boolean add(E e) {
-		if(size < elements.length) {
-			elements[size] = e;
-		} else {
-			// Allocate bigger Array...
-		}
-		++size;
+	// Constructor that creates an ArrayList out of
+	// an existing collection
+	public MyArrayList(Collection<? extends E> c) {
+		elements = c.toArray();
+		size = elements.length;
 		
+		// Apparently, c.toArray(); may not correctly return an Array of objects (Bug 6260652) so
+		// you have to do this to ensure it works properly
+		if(elements.getClass() != Object[].class) {
+			
+			// Create a copy of the elements array with the size "size"
+			// The array is an array of objects 
+			elements = Arrays.copyOf(elements,  size, Object[].class);
+		}
+	}
+	
+	public boolean add(E e) {
 		return false;
 	}
-
+	
 	public void add(int index, E element) {
-		// TODO Auto-generated method stub
+
+	}
+	
+	public void ensureCapacity(int minCapacity) {
 		
 	}
 
+	// Add an existing collection to the ArrayList
 	public boolean addAll(Collection<? extends E> c) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public boolean addAll(int index, Collection<? extends E> c) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
