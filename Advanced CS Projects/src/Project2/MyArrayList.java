@@ -1,5 +1,6 @@
 package Project2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -12,6 +13,10 @@ public class MyArrayList<E> implements List<E> {
 	private int size; // Number of elements actually in the elements array
 	private Object[] elements; // Array of elements
 	private int modCount; // Used to check to see if the
+	
+	// Default capacity of elements array
+	private final int DEFAULT_CAPACITY = 10;
+	
 	// array was modified whilst iterating through it
 	
 	// Constructor that sets the initial capacity to whatever
@@ -32,7 +37,7 @@ public class MyArrayList<E> implements List<E> {
 	public MyArrayList() {
 		
 		// Create array
-		elements = new Object[10]; // Initial size of 10;
+		elements = new Object[DEFAULT_CAPACITY]; // Initial size of 10;
 		
 		// Initial number of elements in the array is 0
 		size = 0;
@@ -49,6 +54,14 @@ public class MyArrayList<E> implements List<E> {
 		// Set size to the number of elements now in the array
 		size = elements.length;
 		
+		// length may be zero if the c collection is empty. 
+		// If it is zero, we want to create the elements array with a 
+		// initial capacity equal to ten instead of zero 
+		if(elements.length == 0) {
+			System.out.println("if statement executed");
+			elements = new Object[DEFAULT_CAPACITY];
+		}
+		
 		// Apparently, c.toArray(); may not correctly return an Array of objects (Bug 6260652)
 		// Bug 6260652 is that, the Java documentation claims that collection.toArray()
 		// is "identical in function" to collection.toArray(new Object[0]);
@@ -56,11 +69,19 @@ public class MyArrayList<E> implements List<E> {
 		// of a subtype such as String[], its toArray() will return an array for the same time
 		// as it uses clone() instead of Object[]
 		// So if you later try to store a non-String in that Array, you'll get an ArrayStoreException 
-		if(elements.getClass() != Object[].class) {
-			
+		if(elements.getClass() != Object[].class) {	
 			// In order to combat the bug, you can create a copy of the array using the
 			// Arrays.copyOf(original array, new size, class that the Array will be)
-			elements = Arrays.copyOf(elements,  size, Object[].class);
+			
+			// If the length of the elements array is 0, we want to create the array with an 
+			// initial capacity of 10. If it isn't 0, we create the array with the capacity equal to the\
+			// number of elements in the c collection. The length may be zero if the c collection is empty. 
+			if(elements.length == 0) {
+				System.out.println("if statement executed");
+				elements = Arrays.copyOf(elements,  DEFAULT_CAPACITY, Object[].class);
+			} else {
+				elements = Arrays.copyOf(elements,  size, Object[].class);
+			}
 		}
 	}
 	
@@ -188,8 +209,8 @@ public class MyArrayList<E> implements List<E> {
 		System.arraycopy(elements, index, elements, index + c.size(), size - index);
 		
 		// Add the collection to the array
-		for(int i = 0; i < c.size(); i++) {
-			elements[size + 1] = arr[i];
+		for(int i = 0; i < c.size(); i++, index++) {
+			elements[index] = arr[i];
 			size++;
 		}
 		
@@ -535,6 +556,206 @@ public class MyArrayList<E> implements List<E> {
 			toReturn += elements[i] + " ";
 		}
 		return toReturn;
+	}
+	
+	/**
+	 * Internal method for testing
+	 * @return elements.length
+	 */
+	private int getLength() {
+		return elements.length;
+	}
+	
+	public static void main(String[] args) {
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test One");
+		
+		// Test: Null Constructor
+		MyArrayList<String> arr0 = new MyArrayList<String>();
+		if(arr0.size() == 0) {
+			System.out.println("pass");
+		} else {
+			System.out.println("fail");
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Two");
+		
+		// Test: Construct with empty collection
+		ArrayList<String> toAdd1 = new ArrayList<String>(); 
+		MyArrayList<String> arr1 = new MyArrayList<String>(toAdd1);
+		if(arr1.size() == 0) {
+			System.out.println("pass");
+		} else {
+			System.out.println("fail");
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Three");
+		
+		// Test: Constructor with Specific Initial Capacity 
+		MyArrayList<String> arr2 = new MyArrayList<String>(25);
+		if(arr2.getLength() == 25) { 
+			System.out.println("pass");
+		} else {
+			System.out.println("fail");
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Four");
+		
+		// Test: Add at end to empty MyArrayList
+		MyArrayList<Integer> arr3 = new MyArrayList<Integer>();
+		arr3.add(3);
+		if(arr3.get(0).equals(3)) {
+			System.out.println("pass");
+		} else {
+			System.out.println("fail");
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Five");
+		
+		// Test: Add at end to non-empty MyArrayList
+		arr3.add(4);
+		if(arr3.get(1).equals(4)) {
+			System.out.println("pass");
+		} else {
+			System.out.println("fail");
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Six");
+		
+		// Test: Add at position
+		MyArrayList<Integer> arr4 = new MyArrayList<Integer>();
+		arr4.add(1); // Add to empty
+		arr4.add(0,2); // Add at position 0 
+		arr4.add(1,3); // Add at position 1
+		if(arr4.get(0).equals(2) && arr4.get(1).equals(3) && arr4.get(2).equals(1)) {
+			System.out.println("pass");
+		} else {
+			System.out.println("fail");
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Seven");
+		
+		// Test: Add all for empty collection
+		ArrayList<String> toAdd2 = new ArrayList<String>(); 
+		toAdd2.add("three"); 
+		toAdd2.add("four"); 
+		toAdd2.add("five"); 
+		arr1.addAll(toAdd2); 
+		for(Object o: arr1) {
+			System.out.println(o);
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Eight");
+		
+		// Test: Add all at position
+		MyArrayList<String> arr5 = new MyArrayList<String>();
+		ArrayList<String> toAdd3 = new ArrayList<String>();
+		toAdd3.add("six");
+		toAdd3.add("seven");
+		toAdd3.add("eight");
+		arr5.add("one");
+		arr5.add("two");
+		arr5.addAll(0, toAdd2);
+		arr5.addAll(2, toAdd3);
+		for(Object o: arr5) {
+			System.out.println(o);
+		} 
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Nine");
+		
+		// Test: clear
+		arr5.clear();
+		if(arr5.size() == 0) {
+			System.out.println("pass");
+		} else {
+			System.out.println("fail");
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Ten");
+		
+		// Test: contains 
+		MyArrayList<Integer> arr6 = new MyArrayList<Integer>();
+		boolean pass1, pass2, pass3, pass4, pass5 = false;
+		// Find in empty
+		if(arr6.contains(1) == false) {
+			pass1 = true;
+		} else {
+			pass1 = false;
+		}
+		arr6.add(1);
+		// Find at front
+		if(arr6.contains(1)) {
+			pass2 = true;
+		} else {
+			pass2 = false;
+		}
+		arr6.add(0, 2);
+		// Find at end
+		if(arr6.contains(1)) {
+			pass3 = true;
+		} else {
+			pass3 = false;
+		}
+		// Find middle
+		arr6.add(3);
+		if(arr6.contains(1)) {
+			pass4 = true;
+		} else {
+			pass4 = false;
+		}
+		// Looking for something that isn't there in a non-empty list
+		if(!arr6.contains(12419)) {
+			pass5 = true;
+		} else {
+			pass5 = false;
+		}
+		
+		if(pass1 && pass2 && pass3 && pass4 && pass5) {
+			System.out.println("pass");
+		} else {
+			System.out.println("fail");
+		}
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("Test Eleven");
+		
+		// Get from outsite the Array
+		MyArrayList<Double> listOfDoubles = new MyArrayList<Double>(15);
+		listOfDoubles.add(2.4);
+		listOfDoubles.add(3.4);
+		try {
+			System.out.println(listOfDoubles.get(5));
+		} catch (IndexOutOfBoundsException e) {
+			System.out.println("pass");
+		}
+		try {
+			System.out.println(listOfDoubles.get(20));
+		} catch (IndexOutOfBoundsException e) {
+			System.out.println("pass");
+		}
+		
+		
 	}
 	
 	@SuppressWarnings({ "rawtypes", "hiding" })
