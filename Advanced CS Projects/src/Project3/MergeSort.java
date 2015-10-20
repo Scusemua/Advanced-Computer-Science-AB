@@ -1,5 +1,11 @@
 package Project3;
 
+/**
+ * To do:
+ * Tester of Strings
+ * Use an ArrayDeque instead of a LinkedList
+ */
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
