@@ -2,6 +2,7 @@ package Project3;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MergeSort {
@@ -23,55 +24,83 @@ public class MergeSort {
 			mergeSort(list, comp, center + 1, end);
 		
 			// Merge the results
-			merge(list, comp, begin, center - 1, center + 1, end);
+			merge(list, comp, begin, center, center + 1, end);
 		}
 	}
 	
-	private static <T> void merge(List<T> list, Comparator<T> comp, int leftBegin, int rightBegin, int leftEnd, int rightEnd) {
-
-		String[] listArr = (String[]) list.toArray();
+	private static <T> void merge(List<T> list, Comparator<T> comp, int leftBegin, int leftEnd, int rightBegin, int rightEnd) {
+		LinkedList<T> leftList = new LinkedList<T>();
+		LinkedList<T> rightList = new LinkedList<T>();
 		
-		comp = new MyStringComparator();
+		// Populate left list
+		for(int i = leftBegin; i <= leftEnd; i++) {
+			leftList.add(list.get(i));
+		}
 		
-		// The number of elements that should be in the final list
-		int numberOfElements = rightEnd - leftBegin + 1;
+		// Populate right list
+		for(int i = rightBegin; i <= rightEnd; i++) {
+			rightList.add(list.get(i));
+		}
 		
-		// The (to-be) sorted list
-		ArrayList<T> finalList = new ArrayList<T>();
+		int iteration = 0;
 		
-		// Starting index of the finalList ArrayList
-		int finalListStart = 0;
-		
-		while(leftBegin <= leftEnd && rightBegin <= rightEnd) {
-			if((comp.compare(listArr[leftBegin], listArr[rightBegin])) == -1) {
-				 
-			} else if ((comp.compare(listArr[leftBegin], listArr[rightBegin]) == 0)) {
-				
+		// Keep going until one of the lists is empty
+		while(leftList.size() != 0 && rightList.size() != 0) {
+			// If the left object is less than or equal to the right object
+			if(comp.compare(leftList.getFirst(), rightList.getFirst()) <= 0) {
+				list.set(leftBegin + iteration, leftList.get(0));
+				leftList.removeFirst();
 			} else {
-				
+				list.set(leftBegin + iteration, rightList.get(0));
+				rightList.removeFirst();
+			}
+			iteration++;
+		}
+		
+		if(leftList.size() == 0) {
+			for(int i = 0; i < rightList.size(); i++) {
+				list.set(leftBegin + iteration, rightList.get(i));
+				iteration++;
+			}
+		} else {
+			for(int i = 0; i < leftList.size(); i++) {
+				list.set(leftBegin + iteration, leftList.get(i));
+				iteration++;
 			}
 		}
 	}
 	
-	class MyStringComparator implements Comparator {
-		private int compare(String s1, String s2) {
-			return 0;
-		}
-
-		public int compare(Object arg0, Object arg1) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-	}
-	
-	class MyIntegerComparator implements Comparator {
-		private int compare(Integer i1, Integer i2) {
-			return 0;
-		}
-
-		public int compare(Object o1, Object o2) {
-			// TODO Auto-generated method stub
-			return 0;
+	public static void main(String[] args) {
+		ArrayList<Integer> intList = new ArrayList<Integer>();
+		
+		intList.add(1);
+		intList.add(4);
+		intList.add(2);
+		intList.add(3);
+		intList.add(5);
+		intList.add(9);
+		intList.add(134);
+		intList.add(12);
+		intList.add(13);
+		intList.add(11);
+		intList.add(8);
+		
+		mergeSort(intList, new MyIntegerComparator(), 0, intList.size() - 1 );
+		
+		for(int i = 0; i < intList.size(); i++) {
+			System.out.println(intList.get(i));
 		}
 	}
 }
+
+	class MyStringComparator implements Comparator<String> {
+		public int compare(String s1, String s2) {
+			return s1.compareTo(s2);
+		}
+	}
+
+	class MyIntegerComparator implements Comparator<Integer> {
+		public int compare(Integer i1, Integer i2) {
+			return i1.compareTo(i2);
+		}
+	}
