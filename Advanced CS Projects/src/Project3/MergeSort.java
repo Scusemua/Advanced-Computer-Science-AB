@@ -3,6 +3,7 @@ package Project3;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.List;
 
 public class MergeSort {
@@ -29,8 +30,10 @@ public class MergeSort {
 	}
 	
 	private static <T> void merge(List<T> list, Comparator<T> comp, int leftBegin, int leftEnd, int rightBegin, int rightEnd) {
-		LinkedList<T> leftList = new LinkedList<T>();
-		LinkedList<T> rightList = new LinkedList<T>();
+		ArrayDeque<T> leftList = new ArrayDeque<T>();
+		ArrayDeque<T> rightList = new ArrayDeque<T>();
+		
+		System.out.println("*******************************************");
 		
 		// Populate left list
 		for(int i = leftBegin; i <= leftEnd; i++) {
@@ -42,31 +45,76 @@ public class MergeSort {
 			rightList.add(list.get(i));
 		}
 		
+		System.out.println("");
+		
+		System.out.println("Left List: " + leftList.size());
+		for(int i = 0; i < leftList.size(); i++) {
+			//System.out.print(leftList.get(i)+ " ");
+		}
+		
+		System.out.println("");
+		
+		System.out.println("Right List: " + rightList.size());
+		for(int i = 0; i < rightList.size(); i++) {
+			//System.out.print(rightList.get(i)+ " ");
+		}
+		
+		System.out.println("");
+		
 		int iteration = 0;
 		
 		// Keep going until one of the lists is empty
 		while(leftList.size() != 0 && rightList.size() != 0) {
 			// If the left object is less than or equal to the right object
 			if(comp.compare(leftList.getFirst(), rightList.getFirst()) <= 0) {
-				list.set(leftBegin + iteration, leftList.get(0));
+				list.set(leftBegin + iteration, leftList.getFirst());
 				leftList.removeFirst();
 			} else {
-				list.set(leftBegin + iteration, rightList.get(0));
+				list.set(leftBegin + iteration, rightList.getFirst());
 				rightList.removeFirst();
 			}
 			iteration++;
 		}
 		
-		if(leftList.size() == 0) {
-			for(int i = 0; i < rightList.size(); i++) {
-				list.set(leftBegin + iteration, rightList.get(i));
+		System.out.println("");
+		
+		System.out.println("Left List 2: " + leftList.size());
+		for(int i = 0; i < leftList.size(); i++) {
+			//System.out.print(leftList.get(i)+ " ");
+		}
+		
+		System.out.println("");
+		
+		System.out.println("Right List 2: " + rightList.size());
+		for(int i = 0; i < rightList.size(); i++) {
+			//System.out.print(rightList.get(i)+ " ");
+		}
+		
+		System.out.println("");
+		
+		int leftListSize = leftList.size();
+		int rightListSize = rightList.size();
+		
+		if(leftListSize == 0) {
+			for(int i = 0; i < rightListSize; i++) {
+				System.out.println("Setting list at position " + (leftBegin + iteration) + " the value of " + rightList.getFirst() + " from rightList");
+				list.set(leftBegin + iteration, rightList.getFirst());
+				rightList.removeFirst();
 				iteration++;
 			}
 		} else {
-			for(int i = 0; i < leftList.size(); i++) {
-				list.set(leftBegin + iteration, leftList.get(i));
+			for(int i = 0; i < leftListSize; i++) {
+				System.out.println("Setting list at position " + (leftBegin + iteration) + " the value of " + leftList.getFirst() + " from leftList");
+				list.set(leftBegin + iteration, leftList.getFirst());
+				leftList.removeFirst();
 				iteration++;
 			}
+		}
+		
+		System.out.println();
+		System.out.println("Resulting List: " + list.size());
+		for(int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i));
 		}
 	}
 	
@@ -74,22 +122,87 @@ public class MergeSort {
 		ArrayList<Integer> intList = new ArrayList<Integer>();
 		
 		intList.add(1);
+		intList.add(3);
+		intList.add(5);
 		intList.add(4);
 		intList.add(2);
+		intList.add(6);
+		intList.add(7);
+		
+		/* intList.add(14);
+		intList.add(135);
+		intList.add(1);
+		
+		intList.add(7);
+		intList.add(13);
+		intList.add(134);
+		intList.add(5);
+		
+		intList.add(8);
+		intList.add(164);
+		intList.add(212);
+		intList.add(1); */
+		
+		/* intList.add(1);
+		intList.add(4);
+		intList.add(2);
+		//intList.add(11);
 		intList.add(3);
 		intList.add(5);
 		intList.add(9);
 		intList.add(134);
 		intList.add(12);
+		//intList.add(11);
 		intList.add(13);
-		intList.add(11);
 		intList.add(8);
+		intList.add(164);
+		intList.add(212);
+		intList.add(1); */
 		
 		mergeSort(intList, new MyIntegerComparator(), 0, intList.size() - 1 );
 		
+		System.out.println("\n\n\n\nEnd Int Sort: ");
 		for(int i = 0; i < intList.size(); i++) {
 			System.out.println(intList.get(i));
 		}
+		
+		ArrayList<String> stringList = new ArrayList<String>();
+		
+		/* stringList.add("A");
+		stringList.add("C");
+		stringList.add("B");
+		stringList.add("D"); */
+		
+		/* stringList.add("A");
+		stringList.add("B");
+		stringList.add("C");
+		stringList.add("D"); */
+		
+		/* stringList.add("A");
+		stringList.add("B");
+		stringList.add("C");
+		stringList.add("D");
+		stringList.add("E");
+		stringList.add("F");
+		stringList.add("A");
+		stringList.add("H"); */
+		
+		stringList.add("A");
+		stringList.add("B");
+		stringList.add("C");
+		stringList.add("D");
+		stringList.add("E");
+		stringList.add("F");
+		stringList.add("A");
+		stringList.add("H");
+		stringList.add("G");
+		
+		mergeSort(stringList, new MyStringComparator(), 0, stringList.size() - 1 );
+		System.out.println("\n\n\n\nEnd String Sort: ");
+		for(int i = 0; i < stringList.size(); i++) {
+			System.out.println(stringList.get(i));
+		}
+		
 	}
 }
 
