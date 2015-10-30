@@ -30,8 +30,12 @@ public class MergeSort {
 	}
 	
 	private static <T> void merge(List<T> list, Comparator<T> comp, int leftBegin, int leftEnd, int rightBegin, int rightEnd) {
-		ArrayDeque<T> leftList = new ArrayDeque<T>();
-		ArrayDeque<T> rightList = new ArrayDeque<T>();
+		// Using ArrayDeque, removing the first is not O(n) because you don't have to shift
+		// which is what it is in an array. LinkedList is also possible but iterating thru LinkedList
+		// is slower than iterating thru ArrayDeque (not that I'm iterating but if I wanted to iterate, it would be slower)
+		// Give it a size so it doesn't have to expand it during runtime 
+		ArrayDeque<T> leftList = new ArrayDeque<T>((list.size() / 2) + 1);
+		ArrayDeque<T> rightList = new ArrayDeque<T>((list.size() / 2) + 1);
 		
 		System.out.println("*******************************************");
 		
