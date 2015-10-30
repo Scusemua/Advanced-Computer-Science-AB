@@ -207,6 +207,12 @@ public class MergeSort {
 			System.out.println(stringList.get(i));
 		}
 		
+		
+		mergeSort(stringList, new MyStringComparator(), 0, stringList.size() - 1);
+		
+		for(int i = 0; i < stringList.size(); i++) {
+			System.out.println(stringList.get(i));
+		}
 	}
 }
 
