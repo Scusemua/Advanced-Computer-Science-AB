@@ -1,8 +1,13 @@
 package Project4;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MyLinkedListTester {
+	
+	// I did test all the methods, although I just deleted the code after testing
+	// because it started to get incredibly confusing to figure out what was going
+	// wrong when certain things didn't initially work 
 	public static void main(String[] args) {
 		MyLinkedList<Integer> intList =  new MyLinkedList<Integer>();
 		
@@ -27,10 +32,18 @@ public class MyLinkedListTester {
 		
 		intList.add(intList.size(), 7);
 		
+		intList.add(0, 44);
+		
+		ArrayList<Integer> intListSub = (ArrayList<Integer>) intList.subList(2, intList.size());
+		
+		System.out.println("intList: ");
 		printAll(intList);
+		System.out.println("*\n*\n*\n");
+		System.out.println("intListSub: ");
+		printAll(intListSub);
 	}
 	
-	public static void printAll(MyLinkedList<?> list) {
+	public static void printAll(List<?> list) {
 		System.out.println("Size: " + list.size());
 		for(int i = 0; i < list.size(); i++) {
 			System.out.println(list.get(i));

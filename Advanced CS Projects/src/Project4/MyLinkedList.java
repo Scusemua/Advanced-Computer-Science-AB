@@ -1,5 +1,6 @@
 package Project4;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -351,48 +352,64 @@ public class MyLinkedList<T> implements List<T> {
 		}
 	}
 	
-	public Object set(int index, Object data) {
-		LinkedListNode<T> temp = head;
-		@SuppressWarnings("unchecked")
-		LinkedListNode<T> toReplace = new LinkedListNode<T>(null, null, (T) data);
+	public T set(int index, T data) {
+		
+		if(index < 0 || index >= size()) {
+			throw new IndexOutOfBoundsException("Illegal Index: " + index);
+		}
+		
+		if(index == size()) {
+			LinkedListNode<T> toReplace = new LinkedListNode<T>(tail, tail.getPrevious(), (T) data);
+			T tempData = tail.getPrevious().getData();
+			tail.getPrevious().setNext(toReplace);
+			tail.setPrevious(toReplace);
+			modcount++;
+			return tempData;
+		}
+		
+		LinkedListNode<T> temp = head.getNext();
+		
 		int i = 0;
-		while(temp.getNext() != null && i <= index) {
+		
+		while(i != index) {
 			temp = temp.getNext();
 			i++;
 		}
+		T tempData = temp.getData();
+		LinkedListNode<T> toReplace = new LinkedListNode<T>(temp.getNext(), temp.getPrevious(), (T) data);
 		temp.getPrevious().setNext(toReplace);
-		if(temp.getNext() != null) temp.getNext().setPrevious(toReplace);
+		temp.getNext().setPrevious(toReplace);
 		modcount++;
-		return temp;
+		return tempData;
 	}
 	
 	public int size() {
 		return nodeCount;
 	}
 	
-	public List<T> subList(int left, int right) {
+	public List<T> subList(int fromIndex, int toIndex) {
+		
 		int index = 0;
-		LinkedListNode<T> temp = head;
-		if(right > nodeCount) {
-			throw new IndexOutOfBoundsException("Index: " + right);
-		}
-		// If left is bigger than right, switch the values (as opposed to just not 
-		// return anything at all)
-		if(left > right) {
-			int tempLeft = left;
-			left = right;
-			right = tempLeft;
-		}
-		while(temp.getNext() != null) {
-			temp = temp.getNext();
-			if(index <= left) break;
+		
+		LinkedListNode<T> temp = head.getNext();
+		
+		if(fromIndex < 0 || toIndex > size()) {
+			throw new IndexOutOfBoundsException("Illegal Index(es): " + fromIndex + " or " + toIndex);
 		}
 		
-		MyLinkedList<T> toReturn = new MyLinkedList<T>();
-		toReturn.add(temp.getData());
-		while(temp.getNext() != null && index <= right) {
+		if(fromIndex > toIndex) {
+			throw new IllegalArgumentException("Param fromIndex "  + fromIndex + " is bigger than toIndex " + toIndex);
+		}
+
+		while(index < fromIndex) {
 			temp = temp.getNext();
+			index++;
+		}
+		
+		ArrayList<T> toReturn = new ArrayList<T>();
+		while(temp != tail && index < toIndex) {
 			toReturn.add(temp.getData());
+			temp = temp.getNext();
 			index++;
 		}
 		
@@ -400,10 +417,10 @@ public class MyLinkedList<T> implements List<T> {
 	}
 	
 	public Object[] toArray() {
-		Object[] toReturn = new Object[nodeCount];
+		Object[] toReturn = new Object[size()];
 		LinkedListNode<T> temp = head;
 		for(int i = 0; i < toReturn.length; i++) {
-			toReturn[i] = temp;
+			toReturn[i] = temp.getData();
 			temp = temp.getNext();
 		}
 		
@@ -413,6 +430,7 @@ public class MyLinkedList<T> implements List<T> {
 	public Object[] toArray(Object[] arr) {
 		int index = 0;
 		
+		// Go to the next free space in the arr array
 		for(int i = 0; i < arr.length; i++) {
 			if(arr[i] == null) {
 				index = i; 
