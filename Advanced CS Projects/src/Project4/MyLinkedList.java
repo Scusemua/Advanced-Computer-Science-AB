@@ -1,16 +1,25 @@
 package Project4;
 
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
-public class MyLinkedList<T> implements List {
+@SuppressWarnings("rawtypes")
+public class MyLinkedList<T> implements List<T> {
 	// Head node
 	private LinkedListNode<T> head;
 	
+	// Tail node
+	private LinkedListNode<T> tail;
+	
 	// Number of nodes
-	private int nodeCount = 1;
+	private int nodeCount = 0;
+	
+	// Check for concurrent modification while iterating 
+	private int modcount = 0;
 	
 	// Constructor 
 	public MyLinkedList() {
@@ -18,123 +27,110 @@ public class MyLinkedList<T> implements List {
 		// nor does it hold a pointer to a previous node. It also currently does
 		// not hold a pointer to the next node as the head node is currently the 
 		// only node in the MyLinkedList
+		head = new LinkedListNode<T>(tail, null, null);
+		tail = new LinkedListNode<T>(null, head, null);
+		head.setNext(tail);
+		System.out.println("Constructor called!");
 	}
 	
-	// Re
 	public boolean addFirst(T data) {
-		head = new LinkedListNode<T>(null, null, data);
+		LinkedListNode<T> toAdd = new LinkedListNode<T>(tail, head, data);
+		head.setNext(toAdd);
+		tail.setPrevious(toAdd);
+		modcount++;
+		nodeCount = 1;
 		return true;
 	}
 	
 	// Append a node to the end of the MyLinkedList
 	// If the head node hasn't been initialized, initialize it
-	public boolean add(Object data) {
-		@SuppressWarnings("unchecked")
+	// Adds at the end of the LinkedList
+	@Override
+	public boolean add(T data) {
+		LinkedListNode<T> toAdd = new LinkedListNode<T>(tail, tail.getPrevious(), (T) data);
+		tail.getPrevious().setNext(toAdd);
+		tail.setPrevious(toAdd);
+		toAdd.setNext(tail);
 		
-		// Cast the Object data to a T
-		T dataCasted = (T) data;
+		modcount++;
+		nodeCount++;
 		
-		// This node will be used to get to the end of the MyLinkedList
-		LinkedListNode<T> temp = head;
-		
-		// This will be the node that is added to the end of the MyLinkedList
-		LinkedListNode<T> toAdd = new LinkedListNode<T>(null, null, dataCasted);
-		
-		// If this is the first time we're adding something, just 
-		// set the first node to contain the data that we want
-		if(head == null) {
-			addFirst(dataCasted);
-		} else {
-			// Go from node to node until you reach the last node in this list
-			while(temp.getNext() != null) { 
-				temp = temp.getNext();
-			}
-			// Have the last node in the MyLinkedList point to the node that we're adding
-			temp.setNext(toAdd);
-			
-			// The node that we're adding must have a previous pointer pointing to what was
-			// the last node in the MyLinkedList, so set the previous pointer to temp
-			toAdd.setPrevious(temp);
-			
-			// Increment the nodeCount variable, as a node was added to the list
-			nodeCount++;
-		}
 		return true;
 	}
 	
 	// Add a new node at a specific index
-	public void add(int index, Object data) {
-		
-		@SuppressWarnings("unchecked")
-		T dataCasted = (T) data;
-		
-		// If they're trying to add a node to the list when the head node
-		// hasn't even been initialized, throw an IndexOutOfBoundsException
-		// If the head node hasn't been initialized BUT they're trying to add at
-		// index 0, initialize the head node to contain the data specified
-		if(head == null && index != 0) {
+	public void add(int index, T data) {
+		if(index > size() || index < 0) {
 			throw new IndexOutOfBoundsException("Illegal index: " + index);
-		} else if (head == null & index == 0) {
-			addFirst(dataCasted);
 		}
 		
-		// This node will be used to get to the correct node in the list
-		LinkedListNode<T> temp = head;
-		
-		// This will be the node added, assuming all requirements are met
-		LinkedListNode<T> toAdd = new LinkedListNode<T>(null, null, dataCasted);
-		
-		// Get to the correct node in the MyLinkedList
-		// If the index is larger than the number of nodes,
-		// throw an IndexOutOfBoundsException 
-		for(int i = 0; i < index; i++) {
-			if(temp.getNext() != null) {
-				temp = head.getNext();
-			} else {
-				throw new IndexOutOfBoundsException("Illegal index: " + index);
+		LinkedListNode<T> temp = head.getNext();
+		int i = 0;
+		while(true) {
+			if(temp == null) {
+				throw new InternalError("add(int index, T data) iterates past the end");
 			}
+			if(index == i) {
+				LinkedListNode<T> toAdd = new LinkedListNode<T>(temp, temp.getPrevious(), data);
+				temp.getPrevious().setNext(toAdd);
+				temp.setPrevious(toAdd);
+				modcount++;
+				nodeCount++;
+				return;
+			}
+			i++;
+			temp = temp.getNext();
 		}
-		
-		// The pointer before the correct index must now point to the new node
-		temp.getPrevious().setNext(toAdd);
-		
-		// The node at the correct index is going to be shifted to the right,
-		// so now it's previous pointer will be the node that is being added
-		temp.setPrevious(toAdd);
-		
-		// Increment the nodeCount variable, as a node was added to the list
-		nodeCount++;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean addAll(Collection data) {
+	public boolean addAll(Collection<? extends T> data) {
+		for(T element: data) {
+			add(element);
+		}
 		
 		return true;
+		
 	}
 	
-	public boolean addAll(int arg0, Collection arg1) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean addAll(int index, Collection<? extends T> data) {
+		if(data.size() == 0) return false;
+		
+		LinkedListNode<T> temp;
+		if(index > size() || index < 0) {
+			throw new IndexOutOfBoundsException("Illegal index: " + index);
+		} else {
+			temp = head.getNext();
+			for(int i = 0; i < index; i++) {
+				temp = temp.getNext();
+			}
+		}
+		
+		for(T element: data) {
+			LinkedListNode<T> toAdd = new LinkedListNode<T>(temp, temp.getPrevious(), element);
+			temp.getPrevious().setNext(toAdd);
+			temp.setPrevious(toAdd);
+		}
+		
+		nodeCount += data.size();
+		
+		return true;
 	}
 	
 	// Clear all the nodes
 	public void clear() {
 		head.setNext(null);
+		modcount++;
+		nodeCount = 0;
 	}
 	
 	public boolean contains(Object obj) {
 		
-		// If the list is not empty
-		if(head != null) {
-			System.out.println("This list is empty so it does not contain the object in question.");
-			return false;
-		}
-		
 		// Used to go thru the list
-		LinkedListNode<T> temp = head;
+		LinkedListNode<T> temp = head.getNext();
 		
 		// Look at each node
-		while(temp.getNext() != null) {
+		while(temp != tail) {
 			// Check to see if the node's data is the same as the object
 			if(temp.getData().equals(obj)) {
 				return true;
@@ -147,35 +143,60 @@ public class MyLinkedList<T> implements List {
 		return false;
 	}
 	
-	public boolean containsAll(Collection arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean containsAll(Collection data) {
+		Object[] dataArr = data.toArray();
+		LinkedListNode<T> temp = head; // Navigate
+		
+		for(int i = 0; i < dataArr.length; i++) {	
+			Object toCheck = dataArr[i];
+			boolean found = false;
+			
+			while(temp.getNext() != null) {
+				temp = temp.getNext();
+				if(temp.getData().equals(toCheck)) {
+					found = true;
+				}
+			}
+			if(found == false) {
+				return false;
+			} else {
+				found = false; // Reset the boolean
+				// so you can use it to check if the next element
+				// in the dataArr is found
+			}
+		}
+		
+		return true;
 	}
 	
-	public Object get(int index) {
+	public T get(int index) {
 		LinkedListNode<T> temp;
-		if(index > nodeCount) {
+		if(index >= size() || index < 0) {
 			throw new IndexOutOfBoundsException("Illegal index: " + index);
 		} else {
-			temp = head;
-			for(int i = 0; i <= index; i++) {
+			temp = head.getNext();
+			// System.out.println("Index: " + index);
+			// System.out.println("Data: " + temp.getData());
+			for(int i = 0; i < index; i++) {
+				//System.out.println("iterate");
 				temp = temp.getNext();
 			}
 		}
 		
-		return (Object) temp.getData();
+		return temp.getData();
 	}
 	
 	// Return the index of the specified object (assuming it's in the list)
 	public int indexOf(Object obj) {
-		// If the list is not empty
-		if(head != null) {
+		
+		// If the list is empty
+		if(head == null) {
 			System.out.println("This list is empty so it does not contain the object in question.");
 			return -1;
 		}
 		
 		// Used to go thru the list
-		LinkedListNode<T> temp = head;
+		LinkedListNode<T> temp = head.getNext();
 		
 		// Look at each node
 		int index = 0;
@@ -198,13 +219,18 @@ public class MyLinkedList<T> implements List {
 	
 	public boolean isEmpty() {
 		if(head == null) return true;
+		if(nodeCount == 0) return true;
 		
 		return false;
 	}
+	
+	/*
+	 * TODO: THIS METHOD RIGHT HERE, BOYS
+	 */
 	public Iterator iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new LinkedListIterator();
 	}
+	
 	public int lastIndexOf(Object data) {
 		LinkedListNode<T> temp = head;
 		int index = 0;
@@ -225,58 +251,109 @@ public class MyLinkedList<T> implements List {
 		// If nothing is found, return -1
 		return -1;
 	}
+	
 	public ListIterator listIterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	public ListIterator listIterator(int arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	public boolean remove(Object data) {
-		LinkedListNode<T> temp = head;
-		int index = 0;
-		while(temp.getNext() != null) {
-			temp = temp.getNext();
-			index++;
-			if(temp.getData().equals(data)) {
-				System.out.println("Node removed at index " + index);
+		LinkedListNode<T> temp = head.getNext();
+		while(temp != tail) {
+			if(temp.getData() == null) {
+				if(data == null) {
+					temp.getPrevious().setNext(temp.getNext());
+					temp.getNext().setPrevious(temp.getPrevious());
+					nodeCount--;
+					modcount++;
+					return true;
+				}
+			} else if(temp.getData().equals(data)) {
 				temp.getPrevious().setNext(temp.getNext());
 				temp.getNext().setPrevious(temp.getPrevious());
 				nodeCount--;
+				modcount++;
 				return true;
 			}
+			temp = temp.getNext();
 		}
 		return false;
 	}
-	public Object remove(int i) {
-		LinkedListNode<T> temp = head;
+	
+	public T remove(int i) {
+		
+		if(i >= size() || i < 0) {
+			throw new IndexOutOfBoundsException("Illegal index: " + i);
+		}
+		
+		LinkedListNode<T> temp = head.getNext();
 		int index = 0;
-		while(temp.getNext() != null) {
-			temp = temp.getNext();
-			index++;
+		while(temp != tail) {
 			if(index == i) {
 				System.out.println("Node removed at index " + index);
 				temp.getPrevious().setNext(temp.getNext());
 				temp.getNext().setPrevious(temp.getPrevious());
 				nodeCount--;
 			}
+			index++;
+			temp = temp.getNext();
 		}
-		return temp;
+		
+		modcount++;
+		return temp.getData();
 	}
 	
-	public boolean removeAll(Collection arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean removeAll(Collection<?> data) {
+		
+		boolean b = false;
+		
+		for(Object element: data) {
+			b = b || remove(element);
+		}
+		
+		modcount++;
+		return b;
 	}
 	
-	public boolean retainAll(Collection arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean retainAll(Collection data) {
+		
+		int originalNodeCount = nodeCount;
+		
+		if(data.size() == 0) {
+			return false;
+		} 
+		
+		if(size() == 0) {
+			return false;
+		}
+		
+		LinkedListNode<T> temp = head.getNext();
+		while(temp != tail) {
+			T dat = temp.getData();
+			if(!data.contains(dat)) {
+				temp.getNext().setPrevious(temp.getPrevious());
+				temp.getPrevious().setNext(temp.getNext());
+				nodeCount--;
+			}
+			temp = temp.getNext();
+		}
+		
+		modcount++;
+		if(originalNodeCount == nodeCount) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	public Object set(int index, Object data) {
 		LinkedListNode<T> temp = head;
+		@SuppressWarnings("unchecked")
 		LinkedListNode<T> toReplace = new LinkedListNode<T>(null, null, (T) data);
 		int i = 0;
 		while(temp.getNext() != null && i <= index) {
@@ -285,6 +362,7 @@ public class MyLinkedList<T> implements List {
 		}
 		temp.getPrevious().setNext(toReplace);
 		if(temp.getNext() != null) temp.getNext().setPrevious(toReplace);
+		modcount++;
 		return temp;
 	}
 	
@@ -292,7 +370,7 @@ public class MyLinkedList<T> implements List {
 		return nodeCount;
 	}
 	
-	public List subList(int left, int right) {
+	public List<T> subList(int left, int right) {
 		int index = 0;
 		LinkedListNode<T> temp = head;
 		if(right > nodeCount) {
@@ -311,10 +389,10 @@ public class MyLinkedList<T> implements List {
 		}
 		
 		MyLinkedList<T> toReturn = new MyLinkedList<T>();
-		toReturn.add(temp);
+		toReturn.add(temp.getData());
 		while(temp.getNext() != null && index <= right) {
 			temp = temp.getNext();
-			toReturn.add(temp);
+			toReturn.add(temp.getData());
 			index++;
 		}
 		
@@ -351,49 +429,31 @@ public class MyLinkedList<T> implements List {
 		return arr;
 	}
 	
+	private class LinkedListIterator implements Iterator<T> {
+		LinkedListNode<T> currentNode = head; 
+		int expectedModCount;
+		
+		public LinkedListIterator() {
+			expectedModCount = modcount;
+		}
+
+		@Override
+		public boolean hasNext() {
+			if(expectedModCount != modcount) {
+				throw new ConcurrentModificationException();
+			}
+			return currentNode != tail;
+		}
+
+		@Override
+		public T next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T temp = (T) currentNode.getData();
+			currentNode = currentNode.getNext();
+			return temp;
+		}
+	}
+	
 }
-
-/*
-
-
-// This node will be used to get to the end of the list
-		LinkedListNode<T> temp;
-		
-		// Used to add data to the list
-		@SuppressWarnings("unused")
-		LinkedListNode<T> toAdd;
-		
-		// Convert the data collection to an array so we can get each element
-		Object[] dataArr = data.toArray();
-		
-		// Has anything been added to the list yet?
-		if(head == null) {
-			
-			// Ensure the data collection actually has elements
-			if(data.isEmpty()) {
-				return false; 
-			} else {
-				head = new LinkedListNode<T>(null, null, (T) dataArr[0]);
-			}
-			
-			temp = head;
-			
-			for(int i = 1; i < dataArr.length; i++) {
-				toAdd = new LinkedListNode<T>(null, temp, (T) dataArr[1]);
-				temp.setNext(toAdd);
-				temp = toAdd;
-			}
-			
-		}
-		
-		// Initialize temp since it was only initialized within the if statement 
-		temp = head;
-		
-		// Get to the correct node
-		while(temp.getNext() != null) { 
-			temp = temp.getNext();
-		}
-		
-		return false;
-		
-*/

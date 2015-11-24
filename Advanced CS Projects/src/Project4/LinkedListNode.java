@@ -43,4 +43,9 @@ public class LinkedListNode<T> {
 	public void setData(T newData) {
 		data = newData;
 	}
+	
+	// To String Method
+	public String toString() {
+		return "" + data;
+	}
 }
