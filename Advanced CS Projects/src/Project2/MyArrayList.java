@@ -137,7 +137,7 @@ public class MyArrayList<E> implements List<E> {
 		if(minCapacity < oldCapacity) {
 			
 			// Set the new capacity to be 1.5x bigger than the old capacity 
-			int newCapacity = (oldCapacity * 3) / 2 + 1;
+			int newCapacity = ((oldCapacity * 3) / 2) + 1;
 			
 			// Check to see if the 1.5x greater capacity is bigger than the 
 			// requested new capacity

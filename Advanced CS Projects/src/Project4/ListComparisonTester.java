@@ -65,7 +65,7 @@ public class ListComparisonTester {
 		long llAvgGetStart = System.currentTimeMillis();
 		
 		for(int i = 0; i < initialAmount / 10; i++) {
-			// int temp = linkList.get(i);
+			int temp = linkList.get(i);
 			// System.out.println(i);
 		}
 		
