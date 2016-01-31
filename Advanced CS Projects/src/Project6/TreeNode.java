@@ -2,6 +2,7 @@ package Project6;
 
 public class TreeNode<T extends Comparable<T>> {
 	
+	// Comment
 	public TreeNode<T> left,right;
 	private T data;
 	

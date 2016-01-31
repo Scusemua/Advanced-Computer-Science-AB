@@ -11,7 +11,7 @@ public class MyBinaryTree<T extends Comparable<T>> {
 	// data, the data the user is trying to add will be given 
 	// to the root node of the tree
 	public MyBinaryTree() {
-		root = new TreeNode<T>();
+		// root = new TreeNode<T>();
 	}
 	
 	// Constructor for specific root
@@ -22,6 +22,11 @@ public class MyBinaryTree<T extends Comparable<T>> {
 	// Constructor for specific data
 	public MyBinaryTree(T data) {
 		root = new TreeNode<T>(data);
+	}
+	
+	// Clears tree
+	public void clear() {
+		root = null;
 	}
 	
 	/*
