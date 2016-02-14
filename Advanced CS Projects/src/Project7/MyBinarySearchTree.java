@@ -1,12 +1,17 @@
 package Project7;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import Project6.MyBinaryTree;
 import Project6.TreeNode;
 
 public class MyBinarySearchTree<T extends Comparable<T>> extends MyBinaryTree<T> {
+	
+	public Iterator<T> iterator() {
+		return new BinarySearchTreeIterator<T>();
+	}
 	
 	// Default constructor
 	public MyBinarySearchTree() {
@@ -68,6 +73,7 @@ public class MyBinarySearchTree<T extends Comparable<T>> extends MyBinaryTree<T>
 	}
 	
 	// Recursively called get() method
+	// Effectively a contains() method
 	private T getRec(TreeNode<T> n, T data) {
 		if(n == null) {
 			return null;
@@ -352,5 +358,25 @@ public class MyBinarySearchTree<T extends Comparable<T>> extends MyBinaryTree<T>
 		myBST.printBreadthFirst(); 
 		System.out.println(myBST.get(126));
 		System.out.println(myBST.get(8)); */
+	}
+	
+	private class BinarySearchTreeIterator<T> implements Iterator<T> {
+		
+		public BinarySearchTreeIterator() {
+			
+		}
+		
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public T next() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 }

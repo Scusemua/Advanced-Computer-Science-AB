@@ -2,14 +2,18 @@ package Project8;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
 import Project7.*;
 
 public class MySet<T extends Comparable<T>> extends MyBinarySearchTree<T> implements Set<T> {
 
-	@Override
+	// Check to see if the Set contains the specified element
 	public boolean contains(Object o) {
-		// TODO Auto-generated method stub
+		if(get((T)o).equals(o)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -19,10 +23,11 @@ public class MySet<T extends Comparable<T>> extends MyBinarySearchTree<T> implem
 		return null;
 	}
 
-	@Override
+	// Convert the Set to an array of objects
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Object> al = new ArrayList<Object>();
+		inOrder(root, (List<T>) al);
+		return al.toArray();
 	}
 
 	@Override
@@ -31,15 +36,15 @@ public class MySet<T extends Comparable<T>> extends MyBinarySearchTree<T> implem
 		return null;
 	}
 
-	@Override
+	// Remove the specified element from the Set
 	public boolean remove(Object o) {
-		// TODO Auto-generated method stub
-		return false;
+		remove((T) o);
+		return true;
 	}
 
-	@Override
+	// Check to see if the Set contains all specified elements
 	public boolean containsAll(Collection<?> c) {
-		// TODO Auto-generated method stub
+		// Will use iterator for this
 		return false;
 	}
 
@@ -61,4 +66,5 @@ public class MySet<T extends Comparable<T>> extends MyBinarySearchTree<T> implem
 		return false;
 	}
 
+		
 }
